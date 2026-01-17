@@ -1,28 +1,100 @@
-<!DOCTYPE html>
+# index.html
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login / Signup - Virtual Library</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Woodland Library — Fixed</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <h1>Personalized Virtual Library</h1>
-
-    <div class="card">
-        <h2>Login</h2>
-        <input type="text" id="login-username" placeholder="Username">
-        <input type="password" id="login-password" placeholder="Password">
-        <button onclick="login()">Login</button>
-
-        <hr>
-
-        <h3>Create an Account</h3>
-        <input type="text" id="signup-username" placeholder="New Username">
-        <input type="password" id="signup-password" placeholder="New Password">
-        <button onclick="signup()">Signup</button>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">WL</div>
+      <div>
+        <div class="site-title">Woodland Library</div>
+        <div class="site-sub" style="font-size:11px;color:rgba(255,255,255,0.9)">A wooden-themed reading experience</div>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <nav class="topnav" id="navLinks">
+      <a href="#" data-route="home" class="navlink active">Home</a>
+      <a href="#" data-route="books" class="navlink">Books</a>
+      <a href="#" data-route="shelf" class="navlink">My Shelf</a>
+      <a href="#" data-route="profile" class="navlink">Profile</a>
+    </nav>
+
+    <div class="right-controls">
+      <div class="user-chip" id="userChip">
+        <div class="user-av" id="userAv"></div>
+        <div id="userLabel" style="font-size:13px;color:rgba(255,255,255,0.95)">Not signed in</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="content" id="mainContent"></div>
+  </main>
+
+  <button class="floating-add" id="addBtn" title="Add book">＋</button>
+  <div class="toast" id="toast"></div>
+</div>
+
+<div id="modalRoot" class="hidden"></div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
+# index.html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Woodland Library — Fixed</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Roboto:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">WL</div>
+      <div>
+        <div class="site-title">Woodland Library</div>
+        <div class="site-sub" style="font-size:11px;color:rgba(255,255,255,0.9)">A wooden-themed reading experience</div>
+      </div>
+    </div>
+
+    <nav class="topnav" id="navLinks">
+      <a href="#" data-route="home" class="navlink active">Home</a>
+      <a href="#" data-route="books" class="navlink">Books</a>
+      <a href="#" data-route="shelf" class="navlink">My Shelf</a>
+      <a href="#" data-route="profile" class="navlink">Profile</a>
+    </nav>
+
+    <div class="right-controls">
+      <div class="user-chip" id="userChip">
+        <div class="user-av" id="userAv"></div>
+        <div id="userLabel" style="font-size:13px;color:rgba(255,255,255,0.95)">Not signed in</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="content" id="mainContent"></div>
+  </main>
+
+  <button class="floating-add" id="addBtn" title="Add book">＋</button>
+  <div class="toast" id="toast"></div>
+</div>
+
+<div id="modalRoot" class="hidden"></div>
+
+<script src="script.js" defer></script>
 </body>
 </html>
