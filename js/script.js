@@ -1,10 +1,7 @@
-/* Updated Woodland Library with regex validation, larger auth forms, categories */
+const USERNAME_RE = /^[A-Za-z](?!.*__)[A-Za-z0-9_]{2,19}$/; 
+const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/; 
 
-// --- Validation regexes ---
-const USERNAME_RE = /^[A-Za-z](?!.*__)[A-Za-z0-9_]{2,19}$/; // start letter, 3-20 chars, no double underscores
-const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/; // min 8, lowercase, uppercase, digit, special
 
-/* utilities */
 function el(html) {
   const d = document.createElement('div');
   d.innerHTML = html.trim();
@@ -23,7 +20,7 @@ function toast(msg, ms = 1600) {
   t._h = setTimeout(() => t.classList.remove('show'), ms);
 }
 
-/* storage keys */
+
 const KEYS = {
   USERS: 'wl_users_fixed',
   BOOKS: 'wl_books_fixed',
@@ -45,7 +42,6 @@ function save(k, v) {
   localStorage.setItem(k, JSON.stringify(v));
 }
 
-/* profiles helpers */
 function loadProfiles() {
   return load(KEYS.PROFILES, {});
 }
@@ -65,17 +61,17 @@ function setProfile(username, profile) {
   saveProfiles(p);
 }
 
-/* seed data with category and cover URLs so images show */
+
 function ensure() {
   if (!load(KEYS.USERS, null)) save(KEYS.USERS, [{ username: 'admin', password: 'Admin@123' }]);
   
   if (!load(KEYS.BOOKS, null)) {
     const seed = [
-      // Mark first shelf area as Fiction
+      
       { id: uid('b'), title: 'Pride & Prejudice', author: 'Jane Austen', description: 'Classic novel.', url: 'https://www.gutenberg.org/cache/epub/1342/pg1342-images.html', coverData: 'https://covers.openlibrary.org/b/id/8231996-L.jpg', owner: 'admin', createdAt: Date.now(), category: 'Fiction' },
       { id: uid('b'), title: 'Sherlock Holmes', author: 'A. Conan Doyle', description: 'Detective tales.', url: 'https://www.gutenberg.org/ebooks/1661', coverData: 'https://covers.openlibrary.org/b/id/8228691-L.jpg', owner: 'admin', createdAt: Date.now() - 1000 * 60, category: 'Fiction' },
       { id: uid('b'), title: 'Frankenstein', author: 'Mary Shelley', description: 'Gothic novel.', url: 'https://www.gutenberg.org/ebooks/84', coverData: 'https://covers.openlibrary.org/b/id/8225261-L.jpg', owner: 'admin', createdAt: Date.now() - 2000 * 60, category: 'Fiction' },
-      // Mark second shelf area as Non-Fiction
+      
       { id: uid('b'), title: 'Moby Dick', author: 'Herman Melville', description: 'Sea adventure.', url: 'https://www.gutenberg.org/ebooks/2701', coverData: 'https://covers.openlibrary.org/b/id/8100921-L.jpg', owner: 'admin', createdAt: Date.now() - 3000 * 60, category: 'Non-Fiction' },
       { id: uid('b'), title: 'Dracula', author: 'Bram Stoker', description: 'Horror classic.', url: 'https://www.gutenberg.org/ebooks/345', coverData: 'https://covers.openlibrary.org/b/id/8081536-L.jpg', owner: 'admin', createdAt: Date.now() - 4000 * 60, category: 'Non-Fiction' },
       { id: uid('b'), title: 'The Odyssey', author: 'Homer', description: 'Epic poem.', url: 'https://www.gutenberg.org/ebooks/1727', coverData: 'https://covers.openlibrary.org/b/id/8157891-L.jpg', owner: 'admin', createdAt: Date.now() - 5000 * 60, category: 'Non-Fiction' },
@@ -97,7 +93,7 @@ function ensure() {
 
 ensure();
 
-/* session helpers */
+
 function currentUser() {
   return load(KEYS.SESSION, null);
 }
@@ -132,7 +128,6 @@ function refreshUserDisplay() {
   }
 }
 
-/* data access */
 function allBooks() {
   return load(KEYS.BOOKS, []).slice();
 }
@@ -154,7 +149,6 @@ function userShelf(u) {
   return s[u] || [];
 }
 
-/* routing + DOM */
 const main = document.getElementById('mainContent');
 const modalRoot = document.getElementById('modalRoot');
 const navlinks = document.querySelectorAll('.navlink');
@@ -189,7 +183,6 @@ document.getElementById('addBtn').addEventListener('click', () => {
   openAddModal();
 });
 
-/* unified book card (uniform size) */
 function bookCard(book) {
   const div = document.createElement('div');
   div.className = 'book';
@@ -262,7 +255,6 @@ function bookCard(book) {
   return div;
 }
 
-/* shelf/book actions */
 function addToShelf(book) {
   const u = currentUser();
   if (!u) {
@@ -318,7 +310,6 @@ function applyShelfEdit(shelfId, changes) {
   route('shelf');
 }
 
-/* Modals: add/edit */
 function openAddModal() {
   const modal = el(`<div class="modal-backdrop"><div class="modal panel">
     <h3 style="margin:0 0 10px 0">Add Book</h3>
@@ -369,7 +360,6 @@ function openAddModal() {
       bs.unshift(book);
       saveBooks(bs);
       
-      // add private copy
       const shelves = allShelves();
       shelves[currentUser()] = shelves[currentUser()] || [];
       const copy = Object.assign({}, book, { id: uid('s'), origId: book.id });
@@ -488,9 +478,9 @@ function escapeHtml(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
 
-/* Views */
 
-/* Home (simple hero + 3 cards) */
+
+
 function renderLanding() {
   main.innerHTML = '';
   const home = el(`<div>
@@ -510,7 +500,6 @@ function renderLanding() {
   });
 }
 
-/* Books listing — now split into two brown sections: Fiction (first), Non-Fiction (second) */
 function renderBooks() {
   const books = allBooks().sort((a, b) => b.createdAt - a.createdAt);
   main.innerHTML = '';
@@ -579,7 +568,6 @@ function renderBooks() {
   });
 }
 
-/* My Shelf (private copies editable) */
 function renderShelf() {
   const user = currentUser();
   main.innerHTML = '';
@@ -636,7 +624,6 @@ function renderShelf() {
   });
 }
 
-/* Profile page: custom + upload button, remove file input proportion issues */
 function renderProfile() {
   main.innerHTML = '';
   const user = currentUser();
@@ -734,7 +721,6 @@ function renderProfile() {
   });
 }
 
-/* Reader (iframe) — larger height so scrolling inside iframe is comfortable */
 function renderReader(book) {
   main.innerHTML = '';
   
@@ -749,7 +735,6 @@ function renderReader(book) {
   document.getElementById('back').addEventListener('click', () => route('books'));
 }
 
-/* Auth pages with regex validation */
 function renderLogin() {
   main.innerHTML = '';
   
@@ -776,7 +761,6 @@ function renderLogin() {
       return;
     }
     
-    // validate formats first
     if (!USERNAME_RE.test(u)) {
       toast('Invalid username format');
       return;
