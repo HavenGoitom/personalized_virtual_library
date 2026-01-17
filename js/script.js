@@ -1,6 +1,5 @@
-const USERNAME_RE = /^[A-Za-z](?!.*__)[A-Za-z0-9_]{2,19}$/; 
-const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/; 
-
+const USERNAME_RE = /^[A-Za-z](?!.*__)[A-Za-z0-9_]{2,19}$/;
+const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
 function el(html) {
   const d = document.createElement('div');
@@ -19,7 +18,6 @@ function toast(msg, ms = 1600) {
   clearTimeout(t._h);
   t._h = setTimeout(() => t.classList.remove('show'), ms);
 }
-
 
 const KEYS = {
   USERS: 'wl_users_fixed',
@@ -61,20 +59,17 @@ function setProfile(username, profile) {
   saveProfiles(p);
 }
 
-
 function ensure() {
   if (!load(KEYS.USERS, null)) save(KEYS.USERS, [{ username: 'admin', password: 'Admin@123' }]);
   
   if (!load(KEYS.BOOKS, null)) {
     const seed = [
-      
       { id: uid('b'), title: 'Pride & Prejudice', author: 'Jane Austen', description: 'Classic novel.', url: 'https://www.gutenberg.org/cache/epub/1342/pg1342-images.html', coverData: 'https://covers.openlibrary.org/b/id/8231996-L.jpg', owner: 'admin', createdAt: Date.now(), category: 'Fiction' },
       { id: uid('b'), title: 'Sherlock Holmes', author: 'A. Conan Doyle', description: 'Detective tales.', url: 'https://www.gutenberg.org/ebooks/1661', coverData: 'https://covers.openlibrary.org/b/id/8228691-L.jpg', owner: 'admin', createdAt: Date.now() - 1000 * 60, category: 'Fiction' },
       { id: uid('b'), title: 'Frankenstein', author: 'Mary Shelley', description: 'Gothic novel.', url: 'https://www.gutenberg.org/ebooks/84', coverData: 'https://covers.openlibrary.org/b/id/8225261-L.jpg', owner: 'admin', createdAt: Date.now() - 2000 * 60, category: 'Fiction' },
-      
       { id: uid('b'), title: 'Moby Dick', author: 'Herman Melville', description: 'Sea adventure.', url: 'https://www.gutenberg.org/ebooks/2701', coverData: 'https://covers.openlibrary.org/b/id/8100921-L.jpg', owner: 'admin', createdAt: Date.now() - 3000 * 60, category: 'Non-Fiction' },
       { id: uid('b'), title: 'Dracula', author: 'Bram Stoker', description: 'Horror classic.', url: 'https://www.gutenberg.org/ebooks/345', coverData: 'https://covers.openlibrary.org/b/id/8081536-L.jpg', owner: 'admin', createdAt: Date.now() - 4000 * 60, category: 'Non-Fiction' },
-      { id: uid('b'), title: 'The Odyssey', author: 'Homer', description: 'Epic poem.', url: 'https://www.gutenberg.org/ebooks/1727', coverData: 'https://covers.openlibrary.org/b/id/8157891-L.jpg', owner: 'admin', createdAt: Date.now() - 5000 * 60, category: 'Non-Fiction' },
+      { id: uid('b'), title: 'The Odyssey', author: 'Homer', description: 'Epic poem.', url: 'https://www.gutenberg.org/ebooks/1727', coverData: 'https://covers.openlibrary.org/b/id/8157891-L.jpg', owner: 'admin', createdAt: Date.now() - 5000 * 60, category: 'Non-Fiction' }
     ];
     save(KEYS.BOOKS, seed);
   }
@@ -92,7 +87,6 @@ function ensure() {
 }
 
 ensure();
-
 
 function currentUser() {
   return load(KEYS.SESSION, null);
@@ -478,9 +472,6 @@ function escapeHtml(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
 
-
-
-
 function renderLanding() {
   main.innerHTML = '';
   const home = el(`<div>
@@ -780,4 +771,66 @@ function renderLogin() {
     setCurrentUser(u);
     toast('Signed in');
     route('books');
-  });}
+  });
+}
+
+function renderSignup() {
+  main.innerHTML = '';
+  
+  const card = el(`<div class="panel auth" style="max-width:760px;margin:12px auto">
+    <h3>Signup</h3>
+    <div style="margin-top:10px;display:grid;gap:10px">
+      <label>Username</label><input id="su_user" type="text" placeholder="e.g. alice_01" />
+      <label>Password</label><input id="su_pass" type="password" placeholder="Your password" />
+      <label>Confirm Password</label><input id="su_pass2" type="password" placeholder="Confirm password" />
+      <div style="display:flex;justify-content:flex-end;gap:8px"><button class="btn ghost" id="toLogin">Login</button><button class="btn" id="doSignup">Signup</button></div>
+      <div style="font-size:13px;color:#6d5a48">Username: 3–20 chars, start with letter, letters/numbers/underscore allowed. Password: min 8 chars, must include upper, lower, digit & special.</div>
+    </div>
+  </div>`);
+  
+  main.appendChild(card);
+  
+  card.querySelector('#toLogin').addEventListener('click', () => route('login'));
+  
+  card.querySelector('#doSignup').addEventListener('click', () => {
+    const u = card.querySelector('#su_user').value.trim();
+    const p = card.querySelector('#su_pass').value;
+    const p2 = card.querySelector('#su_pass2').value;
+    
+    if (!u || !p || !p2) {
+      toast('Fill all fields');
+      return;
+    }
+    
+    if (!USERNAME_RE.test(u)) {
+      toast('Invalid username format');
+      return;
+    }
+    
+    if (!PASSWORD_RE.test(p)) {
+      toast('Password format invalid');
+      return;
+    }
+    
+    if (p !== p2) {
+      toast('Passwords do not match');
+      return;
+    }
+    
+    const users = load(KEYS.USERS, []);
+    if (users.some(x => x.username === u)) {
+      toast('Username already exists');
+      return;
+    }
+    
+    users.push({ username: u, password: p });
+    save(KEYS.USERS, users);
+    setProfile(u, { displayName: u, bio: '', avatarData: null });
+    setCurrentUser(u);
+    toast('Account created');
+    route('books');
+  });
+}
+
+refreshUserDisplay();
+route('home');
