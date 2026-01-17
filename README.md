@@ -47,8 +47,7 @@ No backend. No database. Everything runs in the browser.
 /project
 │ index.html       → main UI
 │ style.css        → styling
-│ app.js           → logic + LocalStorage
-│ books.js         → library book list
+│ script.js        → logic + LocalStorage
 ```
 
 ---
