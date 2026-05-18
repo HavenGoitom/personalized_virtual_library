@@ -1,0 +1,10 @@
+{
+  "name": "woodland/library-backend",
+  "description": "Woodland Library PHP MVC backend",
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "require": {}
+}
