@@ -53,6 +53,7 @@ class BookController extends Controller
         $category = trim($_POST['category'] ?? '');
         $url = trim($_POST['url'] ?? '');
         $description = trim($_POST['description'] ?? '');
+        $normalizedCategory = strtolower(preg_replace('/[\s_-]+/', '', $category)) === 'fiction' ? 'Fiction' : 'Non-Fiction';
 
         $errors = [];
 
@@ -152,6 +153,7 @@ class BookController extends Controller
         $category = trim($_POST['category'] ?? '');
         $url = trim($_POST['url'] ?? '');
         $description = trim($_POST['description'] ?? '');
+        $normalizedCategory = strtolower(preg_replace('/[\s_-]+/', '', $category)) === 'fiction' ? 'Fiction' : 'Non-Fiction';
 
         $errors = [];
 

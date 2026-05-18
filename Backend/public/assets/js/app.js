@@ -92,4 +92,62 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+  function hasStrongPassword(value) {
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(value);
+  }
+
+  function attachConfirmForms(root) {
+    const scope = root || document;
+    scope.querySelectorAll('form[data-confirm]').forEach(function (form) {
+      if (form._confirmAttached) return;
+      form._confirmAttached = true;
+      form.addEventListener('submit', function (event) {
+        if (!confirm(form.getAttribute('data-confirm'))) {
+          event.preventDefault();
+        }
+      });
+    });
+  }
+
+  attachConfirmForms(document);
+
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    let searchTimeout = null;
+    searchInput.addEventListener('input', function () {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(function () {
+        const query = searchInput.value.trim();
+        const endpoint = window.location.pathname.replace(/\/books(\/.*)?$/, '/books');
+        fetch(endpoint + '?search=' + encodeURIComponent(query), {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+          .then(function (response) { return response.text(); })
+          .then(function (html) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const replacement = doc.querySelector('#book-results');
+            if (replacement) {
+              const target = document.getElementById('book-results');
+              target.innerHTML = replacement.innerHTML;
+              attachConfirmForms(target);
+              window.history.replaceState(null, '', endpoint + (query ? '?search=' + encodeURIComponent(query) : ''));
+            }
+          });
+      }, 250);
+    });
+  }
+
+  document.querySelectorAll('input[name="password"]').forEach(function (passwordInput) {
+    passwordInput.addEventListener('input', function () {
+      const form = passwordInput.form;
+      const pw = passwordInput.value.trim();
+      if (pw !== '' && !hasStrongPassword(pw)) {
+        showError(passwordInput, 'Password needs 8+ chars, a lowercase, uppercase, a digit, and a special character');
+      } else {
+        validateInput(passwordInput);
+      }
+    });
+  });
 });

@@ -33,16 +33,25 @@ class Auth
         }
 
         $remember = Cookie::get(self::REMEMBER_COOKIE);
-        if (!$remember || !str_contains($remember, ':')) {
+        if (!$remember) {
             return null;
         }
 
-        [$selector, $validator] = explode(':', $remember, 2);
-        $token = (new AuthToken())->findValidToken($selector);
+        if (str_contains($remember, ':')) {
+            [$selector, $validator] = explode(':', $remember, 2);
+            $token = (new AuthToken())->findValidTokenBySelector($selector);
 
-        if (!$token || !password_verify($validator, $token['validator_hash'])) {
-            Cookie::delete(self::REMEMBER_COOKIE);
-            return null;
+            if (!$token || !password_verify($validator, $token['validator_hash'])) {
+                Cookie::delete(self::REMEMBER_COOKIE);
+                return null;
+            }
+        } else {
+            $token = (new AuthToken())->findValidTokenByToken($remember);
+
+            if (!$token) {
+                Cookie::delete(self::REMEMBER_COOKIE);
+                return null;
+            }
         }
 
         $user = (new User())->findById((int)$token['user_id']);
@@ -65,9 +74,13 @@ class Auth
         Session::start();
         $remember = Cookie::get(self::REMEMBER_COOKIE);
 
-        if ($remember && str_contains($remember, ':')) {
-            [$selector] = explode(':', $remember, 2);
-            (new AuthToken())->revokeToken($selector);
+        if ($remember) {
+            if (str_contains($remember, ':')) {
+                [$selector] = explode(':', $remember, 2);
+                (new AuthToken())->revokeTokenBySelector($selector);
+            } else {
+                (new AuthToken())->revokeTokenByToken($remember);
+            }
         }
 
         Cookie::delete(self::REMEMBER_COOKIE);

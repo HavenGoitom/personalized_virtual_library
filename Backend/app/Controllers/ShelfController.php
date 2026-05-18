@@ -128,6 +128,7 @@ class ShelfController extends Controller
         $author = trim($_POST['author'] ?? '');
         $category = trim($_POST['category'] ?? '');
         $description = trim($_POST['description'] ?? '');
+        $normalizedCategory = strtolower(preg_replace('/[\s_-]+/', '', $category)) === 'fiction' ? 'Fiction' : 'Non-Fiction';
 
         $errors = [];
 
@@ -160,13 +161,25 @@ class ShelfController extends Controller
             $this->redirect(BASE_PATH . '/shelf/edit?id=' . $itemId);
         }
 
-        (new Shelf())->updateItem($itemId, $user['id'], [
+        $shelfModel = new Shelf();
+        $shelfModel->updateItem($itemId, $user['id'], [
             'custom_title' => $title,
             'custom_author' => $author,
-            'custom_category' => $category,
+            'custom_category' => $normalizedCategory,
             'custom_description' => $description,
             'custom_cover_image' => $customCover
         ]);
+
+        if ($item['book_owner_id'] === $user['id']) {
+            (new Book())->update($item['book_id'], [
+                'title' => $title,
+                'author' => $author,
+                'category' => $normalizedCategory,
+                'description' => $description,
+                'url' => $item['original_url'],
+                'cover_image' => $customCover ?: $item['original_cover_image']
+            ]);
+        }
 
         $this->flash('Shelf copy updated.', 'success');
         $this->redirect(BASE_PATH . '/shelf');

@@ -16,13 +16,29 @@
 
 <div id="book-results" class="shelf-wrap">
   <?php
-  $fiction = [];
-  $nonFiction = [];
-  foreach ($books as $book) {
-      $slug = strtolower(str_replace([' ', '_'], '', $book['category']));
+    $fiction = [];
+    $nonFiction = [];
+
+    function normalize_category_for_display($category)
+    {
+      $category = (string)($category ?? '');
+      $normalized = strtolower(preg_replace('/[^\p{L}\p{N}]+/u', '', $category));
+      if ($normalized === 'fiction') {
+        return 'Fiction';
+      }
+      if ($normalized === 'nonfiction' || strpos($normalized, 'non') === 0 || strpos($normalized, 'nonfiction') !== false) {
+        return 'Non-Fiction';
+      }
+      // Fallback to Non-Fiction for unknown categories to keep them visible
+      return 'Non-Fiction';
+    }
+
+    foreach ($books as $book) {
+      $book['category'] = normalize_category_for_display($book['category'] ?? '');
+      $slug = strtolower(preg_replace('/[^\p{L}\p{N}]+/u', '', $book['category']));
       $bucket = $slug === 'fiction' ? 'fiction' : 'nonfiction';
       ${$bucket}[] = $book;
-  }
+    }
 
   function coverUrl($cover) {
       if (!$cover) {
@@ -58,7 +74,9 @@
               <div class="spine-label"><?= htmlspecialchars($book['title']) ?></div>
             </a>
             <div class="cat-badge"><?= htmlspecialchars($book['category']) ?></div>
-            <div class="tag <?= $book['owner_id'] === ($user['id'] ?? 0) ? 'you' : '' ?>"><?= $book['owner_id'] === ($user['id'] ?? 0) ? 'You' : '' ?></div>
+            <div class="tag <?= $book['owner_id'] === ($user['id'] ?? 0) ? 'you' : '' ?>">
+              <?= $book['owner_id'] === ($user['id'] ?? 0) ? 'You added this' : 'Added by ' . htmlspecialchars($book['username']) ?>
+            </div>
             <div class="opts" style="flex-direction:column;top:auto;bottom:8px;right:8px;">
               <form method="post" action="<?= BASE_PATH ?>/shelf/add" style="margin:0">
                 <input type="hidden" name="_csrf" value="<?= \App\Core\Csrf::token() ?>">
@@ -95,7 +113,9 @@
               <div class="spine-label"><?= htmlspecialchars($book['title']) ?></div>
             </a>
             <div class="cat-badge"><?= htmlspecialchars($book['category']) ?></div>
-            <div class="tag <?= $book['owner_id'] === ($user['id'] ?? 0) ? 'you' : '' ?>"><?= $book['owner_id'] === ($user['id'] ?? 0) ? 'You' : '' ?></div>
+            <div class="tag <?= $book['owner_id'] === ($user['id'] ?? 0) ? 'you' : '' ?>">
+              <?= $book['owner_id'] === ($user['id'] ?? 0) ? 'You added this' : 'Added by ' . htmlspecialchars($book['username']) ?>
+            </div>
             <div class="opts" style="flex-direction:column;top:auto;bottom:8px;right:8px;">
               <form method="post" action="<?= BASE_PATH ?>/shelf/add" style="margin:0">
                 <input type="hidden" name="_csrf" value="<?= \App\Core\Csrf::token() ?>">

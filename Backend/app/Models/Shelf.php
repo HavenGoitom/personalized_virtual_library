@@ -9,7 +9,7 @@ class Shelf extends Model
     public function getUserShelf(int $userId): array
     {
         $stmt = $this->db->prepare(
-            'SELECT shelf_items.*, books.title AS original_title, books.author AS original_author, books.category AS original_category, books.description AS original_description, books.cover_image AS original_cover_image, books.url AS original_url, books.owner_id AS book_owner_id FROM shelf_items JOIN books ON books.id = shelf_items.book_id WHERE shelf_items.user_id = ? ORDER BY shelf_items.created_at DESC'
+            'SELECT shelf_items.*, books.title AS original_title, books.author AS original_author, books.category AS original_category, books.description AS original_description, books.cover_image AS original_cover_image, books.url AS original_url, books.owner_id AS book_owner_id, users.username AS book_owner_username FROM shelf_items JOIN books ON books.id = shelf_items.book_id JOIN users ON users.id = books.owner_id WHERE shelf_items.user_id = ? ORDER BY shelf_items.created_at DESC'
         );
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
@@ -17,7 +17,9 @@ class Shelf extends Model
 
     public function findById(int $itemId, int $userId): ?array
     {
-        $stmt = $this->db->prepare('SELECT * FROM shelf_items WHERE id = ? AND user_id = ?');
+        $stmt = $this->db->prepare(
+            'SELECT shelf_items.*, books.title AS original_title, books.author AS original_author, books.category AS original_category, books.description AS original_description, books.cover_image AS original_cover_image, books.url AS original_url, books.owner_id AS book_owner_id, users.username AS book_owner_username FROM shelf_items JOIN books ON books.id = shelf_items.book_id JOIN users ON users.id = books.owner_id WHERE shelf_items.id = ? AND shelf_items.user_id = ?'
+        );
         $stmt->execute([$itemId, $userId]);
         $item = $stmt->fetch();
         return $item ?: null;

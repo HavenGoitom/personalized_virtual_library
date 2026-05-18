@@ -41,7 +41,7 @@ class Validator
 
     public static function category(string $value): bool
     {
-        $normalized = strtolower(str_replace([' ', '_'], '', trim($value)));
-        return in_array($normalized, ['fiction', 'nonfiction', 'non-fiction', 'nonfiction'], true) || $normalized === 'nonfiction';
+        $normalized = strtolower(str_replace([' ', '_', '-'], '', trim($value)));
+        return in_array($normalized, ['fiction', 'nonfiction'], true);
     }
 }
