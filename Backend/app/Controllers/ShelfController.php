@@ -162,13 +162,7 @@ class ShelfController extends Controller
         }
 
         $shelfModel = new Shelf();
-        $shelfModel->updateItem($itemId, $user['id'], [
-            'custom_title' => $title,
-            'custom_author' => $author,
-            'custom_category' => $normalizedCategory,
-            'custom_description' => $description,
-            'custom_cover_image' => $customCover
-        ]);
+        $shelfModel->updateItem($itemId, $user['id'], []);
 
         if ($item['book_owner_id'] === $user['id']) {
             (new Book())->update($item['book_id'], [

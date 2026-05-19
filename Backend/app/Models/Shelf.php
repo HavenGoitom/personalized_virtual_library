@@ -54,15 +54,10 @@ class Shelf extends Model
     public function updateItem(int $itemId, int $userId, array $data): bool
     {
         $stmt = $this->db->prepare(
-            'UPDATE shelf_items SET custom_title = :custom_title, custom_author = :custom_author, custom_category = :custom_category, custom_description = :custom_description, custom_cover_image = :custom_cover_image WHERE id = :id AND user_id = :user_id'
+            'UPDATE shelf_items SET updated_at = NOW() WHERE id = :id AND user_id = :user_id'
         );
 
         return $stmt->execute([
-            'custom_title' => $data['custom_title'],
-            'custom_author' => $data['custom_author'],
-            'custom_category' => $data['custom_category'],
-            'custom_description' => $data['custom_description'],
-            'custom_cover_image' => $data['custom_cover_image'],
             'id' => $itemId,
             'user_id' => $userId
         ]);

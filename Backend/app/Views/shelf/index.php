@@ -11,11 +11,11 @@
   <div style="display:grid;gap:12px;margin-top:8px">
     <?php foreach ($items as $item): ?>
       <?php
-      $title = $item['custom_title'] ?: $item['original_title'];
-      $author = $item['custom_author'] ?: $item['original_author'];
-      $category = $item['custom_category'] ?: $item['original_category'];
-      $description = $item['custom_description'] ?: $item['original_description'];
-      $cover = $item['custom_cover_image'] ?: $item['original_cover_image'];
+      $title = $item['original_title'];
+      $author = $item['original_author'];
+      $category = $item['original_category'];
+      $description = $item['original_description'];
+      $cover = $item['original_cover_image'];
       if (!$cover) {
           $coverUrl = '';
       } elseif (str_starts_with($cover, 'http://') || str_starts_with($cover, 'https://') || str_starts_with($cover, BASE_PATH)) {

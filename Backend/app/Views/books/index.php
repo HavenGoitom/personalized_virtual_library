@@ -17,7 +17,7 @@
 <div id="book-results" class="shelf-wrap">
   <?php
     $fiction = [];
-    $nonFiction = [];
+    $nonfiction = [];
 
     function normalize_category_for_display($category)
     {
@@ -36,8 +36,8 @@
     foreach ($books as $book) {
       $book['category'] = normalize_category_for_display($book['category'] ?? '');
       $slug = strtolower(preg_replace('/[^\p{L}\p{N}]+/u', '', $book['category']));
-      $bucket = $slug === 'fiction' ? 'fiction' : 'nonfiction';
-      ${$bucket}[] = $book;
+        $bucket = $slug === 'fiction' ? 'fiction' : 'nonfiction';
+        ${$bucket}[] = $book;
     }
 
   function coverUrl($cover) {
@@ -101,12 +101,12 @@
   </div>
 
   <div class="shelf">
-    <div class="shelf-label"><div>Non-Fiction</div><div style="font-size:13px;opacity:0.9"><?= count($nonFiction) ?> book<?= count($nonFiction) !== 1 ? 's' : '' ?></div></div>
-    <?php if (empty($nonFiction)): ?>
+    <div class="shelf-label"><div>Non-Fiction</div><div style="font-size:13px;opacity:0.9"><?= count($nonfiction) ?> book<?= count($nonfiction) !== 1 ? 's' : '' ?></div></div>
+    <?php if (empty($nonfiction)): ?>
       <div class="panel" style="margin:12px">No non-fiction books found.</div>
     <?php else: ?>
       <div class="books-row">
-        <?php foreach ($nonFiction as $book): ?>
+        <?php foreach ($nonfiction as $book): ?>
           <div class="book-card">
             <a class="book-link" href="<?= htmlspecialchars($book['url'] ?: '#') ?>" target="_blank" rel="noopener noreferrer">
               <div class="cover" style="background-image:url('<?= htmlspecialchars(coverUrl($book['cover_image'])) ?>')"></div>
