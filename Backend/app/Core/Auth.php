@@ -29,7 +29,7 @@ class Auth
 
         $userId = Session::get('user_id');
         if ($userId) {
-            return (new User())->findById($userId);
+            return (new User())->findById($userId) ?: null;
         }
 
         $remember = Cookie::get(self::REMEMBER_COOKIE);

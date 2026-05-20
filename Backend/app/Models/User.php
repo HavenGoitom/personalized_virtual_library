@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Core\Model;
+use PDO;
 
 class User extends Model
 {
@@ -20,25 +21,25 @@ class User extends Model
         ]);
     }
 
-    public function findByUsername(string $username)
+    public function findByUsername(string $username): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM users WHERE username = ?');
         $stmt->execute([$username]);
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-    public function findByEmail(string $email)
+    public function findByEmail(string $email): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM users WHERE email = ?');
         $stmt->execute([$email]);
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-    public function findById(int $id)
+    public function findById(int $id): ?array
     {
         $stmt = $this->db->prepare('SELECT * FROM users WHERE id = ?');
         $stmt->execute([$id]);
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
     public function updateProfile(int $userId, array $data): bool
@@ -52,11 +53,5 @@ class User extends Model
             'bio' => $data['bio'] ?? null,
             'id' => $userId
         ]);
-    }
-
-    public function setAvatar(int $userId, ?string $avatarPath): bool
-    {
-        $stmt = $this->db->prepare('UPDATE users SET avatar = :avatar WHERE id = :id');
-        return $stmt->execute(['avatar' => $avatarPath, 'id' => $userId]);
     }
 }

@@ -259,13 +259,32 @@ main {
   height: var(--book-h);
   flex: 0 0 auto;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   display: flex;
   flex-direction: column;
   cursor: pointer;
   background: #fff;
   border: 6px solid rgba(0, 0, 0, 0.04);
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-12px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-6px);
+  }
+}
+
+.book:hover {
+  animation: bounce 0.6s ease-in-out infinite;
 }
 
 .book .cover {
